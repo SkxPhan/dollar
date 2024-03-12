@@ -7,7 +7,7 @@
 namespace dollar {
 using Point = std::pair<float, float>;
 using VecItem = std::pair<float, float>;
-using VectorizedStroke = std::vector<VecItem>;
+using VectorizedStroke = std::vector<float>;
 
 enum class Orientation
 {

@@ -82,18 +82,18 @@ vectorizeStroke(const vector<Point>& p, Orientation oSensitive)
         delta = baseOrientation - indicativeAngle;
     }
     float s = 0;
-    vector<VecItem> vec;
+    vector<float> vec;
     vec.reserve(2 * p.size());
     for (const Point& pt : centeredPoints) {
         const float newX = pt.first * cosf(delta) - pt.second * sinf(delta);
         const float newY = pt.second * cosf(delta) + pt.first * sinf(delta);
-        vec.push_back(std::make_pair(newX, newY));
+        vec.push_back(newX);
+        vec.push_back(newY);
         s += newX * newX + newY * newY;
     }
     const float magnitude = sqrtf(s);
-    for (VecItem& item : vec) {
-        item.first /= magnitude;
-        item.second /= magnitude;
+    for (float& item : vec) {
+        item /= magnitude;
     }
     return vec;
 }
