@@ -32,16 +32,16 @@ resample(std::vector<Point> p, int n)
         const float d = std::hypotf(p[i].first - p[i - 1].first, p[i].second - p[i - 1].second);
         if (residualD + d >= len) {
             const float frac = (len - residualD) / d;
-            newPoints.push_back(std::make_pair(p[i - 1].first + frac * (p[i].first - last.first),
-                                               p[i - 1].second + frac * (p[i].second - last.second)));
+            newPoints.push_back(std::make_pair(p[i - 1].first + frac * (p[i].first - p[i - 1].first),
+                                               p[i - 1].second + frac * (p[i].second - p[i - 1].second)));
             residualD = 0;
-            last = p[i];
-            p[i] = newPoints.back();
+            p.insert(p.begin() + i, newPoints.back());
         } else {
             residualD += d;
-            last = p[i];
-            ++i;
         }
+    }
+    if (newPoints.size() == n - 1) {
+        newPoints.push_back(p.back());
     }
     return newPoints;
 }
