@@ -97,12 +97,6 @@ vectorizeStroke(const vector<Point>& p, Orientation oSensitive)
     }
     return vec;
 }
-
-float
-vecCrossProduct(const pair<float, float>& a, const pair<float, float>& b)
-{
-    return a.first * b.second - a.second * b.first;
-}
 }
 Stroke::Stroke(const std::vector<Point>& points, Orientation orientationSensitivity, int samplePointCnt)
   : rawPoints(points)
@@ -116,9 +110,9 @@ optimalCosineDistance(const VectorizedStroke& stroke1, const VectorizedStroke& s
 {
     float a = 0;
     float b = 0;
-    for (size_t i = 0; i < stroke1.size(); i += 2) {
-        a += vecCrossProduct(stroke1[i], stroke2[i]) + vecCrossProduct(stroke1[i + 1], stroke2[i + 1]);
-        b += vecCrossProduct(stroke1[i], stroke2[i + 1]) + vecCrossProduct(stroke1[i + 1], stroke2[i]);
+    for (size_t i = 0; i < stroke1.size() - 1; i += 2) {
+        a += stroke1[i] * stroke2[i] + stroke1[i + 1] * stroke2[i + 1];
+        b += stroke1[i] * stroke2[i + 1] - stroke1[i + 1] * stroke2[i];
     }
     const float angle = atan2(b, a);
     return acosf(a * cosf(angle) + b * sinf(angle));
