@@ -13,7 +13,17 @@ TEST_CASE("1 instance")
     vector<Stroke> strokes{ Stroke({ { 0, 0 }, { 1, 1 }, { 1, 0 } }, Orientation::Insensitive) };
     auto [it, score] = recognize(strokes[0], strokes.begin(), strokes.end());
     CHECK(it == strokes.begin());
-    CHECK_THAT(score, Catch::Matchers::WithinAbs(0.63662f, 0.001f));
+    CHECK_THAT(score, Catch::Matchers::WithinAbs(2896.31f, 0.001f));
+}
+
+TEST_CASE("2 instances")
+{
+    vector<Stroke> strokes{ Stroke({ { 0., 0. }, { 0., 1. }, { 1., 1. } }, Orientation::Sensitive),
+                            Stroke({ { 0., 0. }, { 1., 1. }, { 1., 0. } }, Orientation::Sensitive) };
+    Stroke testStroke{ { { 0., 0. }, { 0., 0.9 }, { 0.02, 0.91 }, { 1., 1. } }, Orientation::Sensitive };
+    auto [it, score] = recognize(testStroke, strokes.begin(), strokes.end());
+    CHECK(it == strokes.begin());
+    CHECK_THAT(score, Catch::Matchers::WithinAbs(17.6808f, 0.001f));
 }
 
 TEST_CASE("Regression of official data")
