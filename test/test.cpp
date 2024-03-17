@@ -57,7 +57,6 @@ TEST_CASE("Regression of official data")
                         continue;
                     }
                     const string stem = f.path().stem().string();
-                    vector<Record> records;
                     string_view label = stem;
                     label.remove_suffix(2);
                     pugi::xml_document doc;
