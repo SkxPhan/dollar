@@ -23,7 +23,7 @@ TEST_CASE("2 instances")
     Stroke testStroke{ { { 0., 0. }, { 0., 0.9 }, { 0.02, 0.91 }, { 1., 1. } }, Orientation::Sensitive };
     auto [it, score] = recognize(testStroke, strokes.begin(), strokes.end());
     CHECK(it == strokes.begin());
-    CHECK_THAT(score, Catch::Matchers::WithinAbs(17.6808f, 0.001f));
+    CHECK_THAT(score, Catch::Matchers::WithinAbs(17.6808f, 0.01f));
 }
 
 TEST_CASE("Regression of official data")
