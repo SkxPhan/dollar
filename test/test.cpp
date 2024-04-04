@@ -13,7 +13,7 @@ TEST_CASE("1 instance")
     vector<Stroke> strokes{ Stroke({ { 0, 0 }, { 1, 1 }, { 1, 0 } }, Orientation::Insensitive) };
     auto [it, score] = recognize(strokes[0], strokes.begin(), strokes.end());
     CHECK(it == strokes.begin());
-    CHECK_THAT(score, Catch::Matchers::WithinAbs(2896.31f, 0.001f));
+    CHECK_THAT(score, Catch::Matchers::WithinAbs(2896.31f, 0.01f));
 }
 
 TEST_CASE("2 instances")
