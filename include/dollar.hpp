@@ -1,6 +1,7 @@
 #ifndef DOLLAR_PROTARCTOR_H_
 #define DOLLAR_PROTARCTOR_H_
 
+#include <limits>
 #include <utility>
 #include <vector>
 
@@ -69,7 +70,12 @@ recognize(const Stroke& target, ItT templateItBegin, ItT templateItEnd)
     ItT matchedIt = templateItEnd;
     for (ItT templateIt = templateItBegin; templateIt != templateItEnd; ++templateIt) {
         const float d = detail::optimalCosineDistance(target.getVectorizedStroke(), templateIt->getVectorizedStroke());
-        const float score = 1.0f / d;
+        float score;
+        if (d == 0.0f) {
+            score = std::numeric_limits<float>::infinity();
+        } else {
+            score = 1.0f / d;
+        }
         if (score > maxScore) {
             maxScore = score;
             matchedIt = templateIt;

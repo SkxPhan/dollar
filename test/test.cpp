@@ -4,6 +4,7 @@
 #include <catch2/matchers/catch_matchers_floating_point.hpp>
 #include <pugixml.hpp>
 
+#include <cmath>
 #include <filesystem>
 #include <string>
 using namespace dollar;
@@ -13,7 +14,7 @@ TEST_CASE("1 instance")
     vector<Stroke> strokes{ Stroke({ { 0, 0 }, { 1, 1 }, { 1, 0 } }, Orientation::Insensitive) };
     auto [it, score] = recognize(strokes[0], strokes.begin(), strokes.end());
     CHECK(it == strokes.begin());
-    CHECK_THAT(score, Catch::Matchers::WithinAbs(2896.31f, 0.01f));
+    CHECK(std::isinf(score));
 }
 
 TEST_CASE("2 instances")
