@@ -32,16 +32,16 @@ resample(std::vector<Point> p, int n)
         const float d = std::hypotf(p[i].first - p[i - 1].first, p[i].second - p[i - 1].second);
         if (residualD + d >= len) {
             const float frac = (len - residualD) / d;
-            newPoints.push_back(std::make_pair(p[i - 1].first + frac * (p[i].first - last.first),
-                                               p[i - 1].second + frac * (p[i].second - last.second)));
+            newPoints.push_back(std::make_pair(p[i - 1].first + frac * (p[i].first - p[i - 1].first),
+                                               p[i - 1].second + frac * (p[i].second - p[i - 1].second)));
             residualD = 0;
-            last = p[i];
-            p[i] = newPoints.back();
+            p.insert(p.begin() + i, newPoints.back());
         } else {
             residualD += d;
-            last = p[i];
-            ++i;
         }
+    }
+    if (newPoints.size() == n - 1) {
+        newPoints.push_back(p.back());
     }
     return newPoints;
 }
@@ -82,26 +82,20 @@ vectorizeStroke(const vector<Point>& p, Orientation oSensitive)
         delta = baseOrientation - indicativeAngle;
     }
     float s = 0;
-    vector<VecItem> vec;
+    vector<float> vec;
     vec.reserve(2 * p.size());
     for (const Point& pt : centeredPoints) {
         const float newX = pt.first * cosf(delta) - pt.second * sinf(delta);
         const float newY = pt.second * cosf(delta) + pt.first * sinf(delta);
-        vec.push_back(std::make_pair(newX, newY));
+        vec.push_back(newX);
+        vec.push_back(newY);
         s += newX * newX + newY * newY;
     }
     const float magnitude = sqrtf(s);
-    for (VecItem& item : vec) {
-        item.first /= magnitude;
-        item.second /= magnitude;
+    for (float& item : vec) {
+        item /= magnitude;
     }
     return vec;
-}
-
-float
-vecCrossProduct(const pair<float, float>& a, const pair<float, float>& b)
-{
-    return a.first * b.second - a.second * b.first;
 }
 }
 Stroke::Stroke(const std::vector<Point>& points, Orientation orientationSensitivity, int samplePointCnt)
@@ -116,9 +110,9 @@ optimalCosineDistance(const VectorizedStroke& stroke1, const VectorizedStroke& s
 {
     float a = 0;
     float b = 0;
-    for (size_t i = 0; i < stroke1.size(); i += 2) {
-        a += vecCrossProduct(stroke1[i], stroke2[i]) + vecCrossProduct(stroke1[i + 1], stroke2[i + 1]);
-        b += vecCrossProduct(stroke1[i], stroke2[i + 1]) + vecCrossProduct(stroke1[i + 1], stroke2[i]);
+    for (size_t i = 0; i < stroke1.size() - 1; i += 2) {
+        a += stroke1[i] * stroke2[i] + stroke1[i + 1] * stroke2[i + 1];
+        b += stroke1[i] * stroke2[i + 1] - stroke1[i + 1] * stroke2[i];
     }
     const float angle = atan2(b, a);
     return acosf(a * cosf(angle) + b * sinf(angle));

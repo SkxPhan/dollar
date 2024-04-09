@@ -4,6 +4,7 @@
 #include <catch2/matchers/catch_matchers_floating_point.hpp>
 #include <pugixml.hpp>
 
+#include <cmath>
 #include <filesystem>
 #include <string>
 using namespace dollar;
@@ -13,7 +14,17 @@ TEST_CASE("1 instance")
     vector<Stroke> strokes{ Stroke({ { 0, 0 }, { 1, 1 }, { 1, 0 } }, Orientation::Insensitive) };
     auto [it, score] = recognize(strokes[0], strokes.begin(), strokes.end());
     CHECK(it == strokes.begin());
-    CHECK_THAT(score, Catch::Matchers::WithinAbs(0.63662f, 0.001f));
+    CHECK(std::isinf(score));
+}
+
+TEST_CASE("2 instances")
+{
+    vector<Stroke> strokes{ Stroke({ { 0., 0. }, { 0., 1. }, { 1., 1. } }, Orientation::Sensitive),
+                            Stroke({ { 0., 0. }, { 1., 1. }, { 1., 0. } }, Orientation::Sensitive) };
+    Stroke testStroke{ { { 0., 0. }, { 0., 0.9 }, { 0.02, 0.91 }, { 1., 1. } }, Orientation::Sensitive };
+    auto [it, score] = recognize(testStroke, strokes.begin(), strokes.end());
+    CHECK(it == strokes.begin());
+    CHECK_THAT(score, Catch::Matchers::WithinAbs(17.6808f, 0.01f));
 }
 
 TEST_CASE("Regression of official data")
@@ -47,7 +58,6 @@ TEST_CASE("Regression of official data")
                         continue;
                     }
                     const string stem = f.path().stem().string();
-                    vector<Record> records;
                     string_view label = stem;
                     label.remove_suffix(2);
                     pugi::xml_document doc;
